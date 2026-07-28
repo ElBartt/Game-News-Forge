@@ -224,6 +224,8 @@ services:
       - api
 ```
 
+Note: the current dashboard implementation still needs `DISCORD_TOKEN` for guild detail lookups, so the example keeps that variable on both `dashboard` and `bot`.
+
 The dashboard now supports path-based hosting and prefixes routes/static assets with `DASHBOARD_BASE_PATH`, while server-to-server API calls can use Docker-internal hostnames through `API_BASE_URL`.
 
 Recommended `.env.prod` structure for Coolify-managed variables:
@@ -263,9 +265,9 @@ Secrets that should exist only in the Coolify UI:
 
 Note: the current dashboard implementation also needs `DISCORD_TOKEN` for guild detail lookups, so it must be provided to both `dashboard` and `bot` until that runtime dependency is removed from the application code.
 
-Variables no longer needed in the production env with this Coolify setup:
-
 `WEB_URL` was part of the older environment template, but the current production dashboard runtime no longer reads `process.env.WEB_URL`. The deployed dashboard URL is now represented by `DISCORD_CALLBACK_URL`, `COOKIE_DOMAIN`, and the public Coolify domain/path configuration instead.
+
+Variables no longer needed in the production env with this Coolify setup:
 
 - `WEB_PORT`
 - `API_PORT`
