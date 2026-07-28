@@ -1,0 +1,18 @@
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY bot/package.json bot/package.json
+COPY api/package.json api/package.json
+COPY dashboard/package.json dashboard/package.json
+
+RUN npm ci --omit=dev
+
+COPY . .
+
+ENV NODE_ENV=prod
+ENV WEB_PORT=4000
+EXPOSE 4000
+
+CMD ["node", "dashboard/app/app.js"]

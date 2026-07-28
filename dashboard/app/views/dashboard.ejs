@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#171717">
     <title>Game News Forge Dashboard</title>
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="<%= dashboardBasePath %>/css/dashboard.css">
     <% if (isDev) { %>
     <style>
         .dev-banner {
@@ -47,7 +47,7 @@
             <ul class="server-list" role="list">
                 <% guilds.forEach(function(guild) { %>
                     <li class="server-item" data-guild-id="<%= guild.id %>" role="listitem" tabindex="0">
-                        <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png" alt="<%= guild.name %> server icon" class="server-icon" onerror="this.src='/img/game-news-forge-logo-light.png'">
+                        <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png" alt="<%= guild.name %> server icon" class="server-icon" onerror="this.src='<%= dashboardBasePath %>/img/game-news-forge-logo-light.png'">
                         <span class="server-name"><%= guild.name %></span>
                     </li>
                 <% }); %>
@@ -60,6 +60,9 @@
     </div>
 
     <!-- Load module scripts with type="module" attribute -->
-    <script nonce="<%= nonce %>" type="module" src="/js/dashboard.js"></script>
+    <script nonce="<%= nonce %>">
+        window.__DASHBOARD_BASE_PATH__ = '<%= dashboardBasePath %>';
+    </script>
+    <script nonce="<%= nonce %>" type="module" src="<%= dashboardBasePath %>/js/dashboard.js"></script>
 </body>
 </html>

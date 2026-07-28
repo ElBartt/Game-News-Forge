@@ -1,6 +1,7 @@
 const helmet = require('helmet');
 const crypto = require('crypto');
 const config = require('@shared/config');
+const { getApiBaseUrl } = require('./apiConfig');
 
 /**
  * Configuration for application security
@@ -17,10 +18,7 @@ class SecurityConfig {
      * Configure security middleware
      */
     setupSecurity() {
-        // Get API URL for CSP configuration
-        const api_port = process.env.API_PORT || 8080;
-        const api_endpoint = process.env.API_ENDPOINT || 'http://localhost';
-        const apiUrl = `${api_endpoint}:${api_port}`;
+        const apiUrl = getApiBaseUrl();
 
         // Generate a secure nonce for inline scripts
         this.app.use((req, res, next) => {

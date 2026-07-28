@@ -148,18 +148,18 @@
     <div class="dev-banner">DEV</div>
     <% } %>
     <div class="container">
-        <img src="/img/game-news-forge-logo-light.png" alt="Game News Forge Logo" class="logo" onerror="this.style.display='none'">
+        <img src="<%= dashboardBasePath %>/img/game-news-forge-logo-light.png" alt="Game News Forge Logo" class="logo" onerror="this.style.display='none'">
         <h1>Game News Forge</h1>
         <p>Track and receive game news and updates directly in your Discord server.</p>
         
         <p class="login-info">By logging in with Discord, you'll be able to manage game subscriptions for servers where you have admin privileges and the bot is present. Choose which games you want to receive news about!</p>
         
         <div class="button-container">
-            <a href="/auth/discord" class="login-button">Login with Discord</a>
+            <a href="<%= dashboardBasePath %>/auth/discord" class="login-button">Login with Discord</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1239574548928794655&permissions=2684354560&integration_type=0&scope=bot" class="add-bot-button" target="_blank">Add to your server</a>
         </div>
         <div class="footer">
-            <a href="/privacy-policy">Privacy Policy</a> | <a href="/tos">Terms of Service</a>
+            <a href="<%= dashboardBasePath %>/privacy-policy">Privacy Policy</a> | <a href="<%= dashboardBasePath %>/tos">Terms of Service</a>
         </div>
     </div>
 </body>

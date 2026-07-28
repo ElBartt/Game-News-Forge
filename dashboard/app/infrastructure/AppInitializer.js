@@ -8,6 +8,7 @@ const express = require('express');
 const path = require('path');
 const logger = require('@shared/logger');
 const config = require('@shared/config');
+const { getDashboardBasePath } = require('../config/urlConfig');
 
 /**
  * Application initializer to set up all components
@@ -53,20 +54,23 @@ class AppInitializer {
      * Configure views and static files
      */
     configureViewsAndStatic() {
+        const dashboardBasePath = getDashboardBasePath();
+
         // Configure view engine and static files
         this.app.set('view engine', 'ejs');
         this.app.set('views', path.join(__dirname, '../views'));
-        this.app.use(express.static(path.join(__dirname, '../public')));
+        this.app.use(dashboardBasePath || '/', express.static(path.join(__dirname, '../public')));
         
         // Add environment variables to all views
         this.app.use((req, res, next) => {
             res.locals.isDev = config.isDev();
             res.locals.isProd = config.isProd();
+            res.locals.dashboardBasePath = dashboardBasePath;
             next();
         });
         
         // Serve images from the img directory
-        this.app.use('/img', express.static(path.join(__dirname, '../img'), {
+        this.app.use(`${dashboardBasePath}/img`, express.static(path.join(__dirname, '../img'), {
             index: false,  // Disable directory index generation
             setHeaders: (res) => {
                 res.set('Cache-Control', 'public, max-age=86400'); // Cache for 1 day
@@ -74,7 +78,7 @@ class AppInitializer {
         }));
         
         // Block direct directory access
-        this.app.use('/img', (req, res, next) => {
+        this.app.use(`${dashboardBasePath}/img`, (req, res, next) => {
             if (req.path === '/' || req.path === '') {
                 return res.status(403).send('Forbidden');
             }
@@ -82,7 +86,7 @@ class AppInitializer {
         });
         
         // Serve logo as favicon
-        this.app.use('/favicon.ico', (req, res) => {
+        this.app.use(`${dashboardBasePath}/favicon.ico`, (req, res) => {
             res.sendFile(path.join(__dirname, '../img/game-news-forge-logo-favicon.png'));
         });
     }
@@ -102,6 +106,8 @@ class AppInitializer {
      * Set up routes
      */
     setupRoutes() {
+        const dashboardBasePath = getDashboardBasePath();
+
         // Create and configure the router with services for authorization
         const router = new Router(
             this.controllers.authController,
@@ -112,7 +118,7 @@ class AppInitializer {
         );
         
         // Use the configured router for all routes
-        this.app.use('/', router.getRouter());
+        this.app.use(dashboardBasePath || '/', router.getRouter());
     }
 
     /**

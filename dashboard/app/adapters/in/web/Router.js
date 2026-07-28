@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const GuildAuthMiddleware = require('./middleware/GuildAuthMiddleware');
+const { withDashboardBasePath } = require('../../../config/urlConfig');
 
 /**
  * Router class to handle all web routes in the application
@@ -32,7 +33,7 @@ class Router {
         if (req.isAuthenticated()) {
             return next();
         }
-        res.redirect('/login');
+        res.redirect(withDashboardBasePath('/login'));
     }
     
     /**
@@ -40,7 +41,11 @@ class Router {
      */
     setupRoutes() {
         // Auth routes
-        this.router.get('/', (req, res) => res.redirect('/dashboard'));
+        this.router.get('/', 
+            this.isAuthenticated,
+            (req, res, next) => this.guildController.renderDashboard(req, res, next)
+        );
+        this.router.get('/dashboard', (req, res) => res.redirect(withDashboardBasePath('/')));
         this.router.get('/login', (req, res, next) => this.authController.renderLogin(req, res, next));
         this.router.get('/logout', (req, res, next) => this.authController.handleLogout(req, res, next));
         
@@ -50,15 +55,9 @@ class Router {
         
         this.router.get('/auth/callback', 
             passport.authenticate('discord', { 
-                failureRedirect: '/login' 
+                failureRedirect: withDashboardBasePath('/login')
             }),
             (req, res, next) => this.authController.handleAuthCallback(req, res, next)
-        );
-        
-        // Dashboard route
-        this.router.get('/dashboard', 
-            this.isAuthenticated,
-            (req, res, next) => this.guildController.renderDashboard(req, res, next)
         );
         
         // Dashboard API Routes with /gnf/ prefix - only the ones actually used by the frontend
