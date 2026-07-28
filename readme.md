@@ -262,7 +262,7 @@ Secrets that should exist only in the Coolify UI:
 - `SESSION_SECRET`
 - `DB_PASSWORD`
 
-note: the current dashboard implementation also needs `DISCORD_TOKEN` for guild detail lookups, so it must be provided to both `dashboard` and `bot` until that runtime dependency is removed from the application code.
+Note: the current dashboard implementation also needs `DISCORD_TOKEN` for guild detail lookups, so it must be provided to both `dashboard` and `bot` until that runtime dependency is removed from the application code.
 
 Variables no longer needed in the production env with this Coolify setup:
 
@@ -273,7 +273,7 @@ Variables no longer needed in the production env with this Coolify setup:
 - `DB_PORT`
 - `WEB_URL`
 
-`WEB_URL` is no longer included because the current production dashboard runtime does not read it; the deployed dashboard URL is represented by `DISCORD_CALLBACK_URL`, `COOKIE_DOMAIN`, and the public Coolify domain/path configuration instead.
+`WEB_URL` was part of the older environment template, but the current production dashboard runtime no longer reads `process.env.WEB_URL`. The deployed dashboard URL is now represented by `DISCORD_CALLBACK_URL`, `COOKIE_DOMAIN`, and the public Coolify domain/path configuration instead.
 
 ### Deploy Commands
 
