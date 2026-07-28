@@ -188,6 +188,7 @@ services:
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
       DISCORD_CALLBACK_URL: ${DISCORD_CALLBACK_URL}
+      # Required by the current dashboard guild lookup flow.
       DISCORD_TOKEN: ${DISCORD_TOKEN}
       SESSION_SECRET: ${SESSION_SECRET}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN}
@@ -261,6 +262,8 @@ Secrets that should exist only in the Coolify UI:
 - `SESSION_SECRET`
 - `DB_PASSWORD`
 
+Note: the current dashboard implementation also needs `DISCORD_TOKEN` for guild detail lookups, so it must be provided to both `dashboard` and `bot` until that runtime dependency is removed from the application code.
+
 Variables no longer needed in the production env with this Coolify setup:
 
 - `WEB_PORT`
@@ -269,6 +272,8 @@ Variables no longer needed in the production env with this Coolify setup:
 - `DB_HOST`
 - `DB_PORT`
 - `WEB_URL`
+
+`WEB_URL` is no longer included because the current production dashboard runtime does not read it; the deployed dashboard URL is represented by `DISCORD_CALLBACK_URL`, `COOKIE_DOMAIN`, and the public Coolify domain/path configuration instead.
 
 ### Deploy Commands
 
