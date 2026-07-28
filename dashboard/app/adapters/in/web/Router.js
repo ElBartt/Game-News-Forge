@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const rateLimit = require('express-rate-limit');
 const GuildAuthMiddleware = require('./middleware/GuildAuthMiddleware');
 const { withDashboardBasePath } = require('../../../config/urlConfig');
 
@@ -27,38 +28,19 @@ class Router {
     }
 
     /**
-     * Create a simple in-memory rate limiter middleware
+     * Create a rate limiter middleware
      * @param {number} windowMs
      * @param {number} maxRequests
      * @returns {Function}
      */
     createRateLimiter(windowMs, maxRequests) {
-        const buckets = new Map();
-
-        return (req, res, next) => {
-            const key = req.ip || req.socket.remoteAddress || 'unknown';
-            const now = Date.now();
-
-            for (const [bucketKey, bucket] of buckets.entries()) {
-                if (now >= bucket.resetAt) {
-                    buckets.delete(bucketKey);
-                }
-            }
-
-            const currentBucket = buckets.get(key);
-
-            if (!currentBucket || now >= currentBucket.resetAt) {
-                buckets.set(key, { count: 1, resetAt: now + windowMs });
-                return next();
-            }
-
-            if (currentBucket.count >= maxRequests) {
-                return res.status(429).send('Too many requests, please try again later.');
-            }
-
-            currentBucket.count += 1;
-            return next();
-        };
+        return rateLimit({
+            windowMs,
+            max: maxRequests,
+            standardHeaders: true,
+            legacyHeaders: false,
+            message: 'Too many requests, please try again later.'
+        });
     }
     
     /**
