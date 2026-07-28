@@ -1,13 +1,9 @@
-const DEFAULT_PROD_BASE_PATH = '/dashboard';
-
 /**
  * Normalize dashboard base path from env
  * @returns {string}
  */
 function getDashboardBasePath() {
-    const configuredBasePath = process.env.DASHBOARD_BASE_PATH;
-    const fallbackBasePath = process.env.NODE_ENV === 'prod' ? DEFAULT_PROD_BASE_PATH : '';
-    const rawBasePath = configuredBasePath !== undefined ? configuredBasePath : fallbackBasePath;
+    const rawBasePath = process.env.DASHBOARD_BASE_PATH || '';
 
     if (!rawBasePath || rawBasePath === '/') {
         return '';
