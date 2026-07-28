@@ -1,3 +1,14 @@
+x-common-env: &common-env
+  NODE_ENV: prod
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+x-db-env: &db-env
+  DB_HOST: mariadb
+  DB_PORT: 3306
+  DB_USER: ${DB_USER}
+  DB_PASSWORD: ${DB_PASSWORD}
+  DB_NAME: ${DB_NAME}
+
 services:
   dashboard:
     build:
@@ -5,27 +16,21 @@ services:
       dockerfile: Dockerfile.dashboard
     restart: unless-stopped
     environment:
-      NODE_ENV: prod
+      <<: *common-env
       WEB_PORT: 4000
       DASHBOARD_BASE_PATH: /dashboard
       API_BASE_URL: http://api:8473
-      DISCORD_CALLBACK_URL: https://bot.oslo.ovh/dashboard/auth/callback
-      WEB_URL: https://bot.oslo.ovh/dashboard
-      COOKIE_DOMAIN: bot.oslo.ovh
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
+      DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
+      DISCORD_CALLBACK_URL: ${DISCORD_CALLBACK_URL}
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      SESSION_SECRET: ${SESSION_SECRET}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      SESSION_MAX_AGE: ${SESSION_MAX_AGE:-604800000}
     depends_on:
       - api
     expose:
       - '4000'
-
-  bot:
-    build:
-      context: .
-      dockerfile: Dockerfile.bot
-    restart: unless-stopped
-    environment:
-      NODE_ENV: prod
-    depends_on:
-      - api
 
   api:
     build:
@@ -33,7 +38,22 @@ services:
       dockerfile: Dockerfile.api
     restart: unless-stopped
     environment:
-      NODE_ENV: prod
+      <<: [*common-env, *db-env]
       API_PORT: 8473
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      SESSION_CLEANUP_INTERVAL: ${SESSION_CLEANUP_INTERVAL:-3600000}
     expose:
       - '8473'
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    restart: unless-stopped
+    environment:
+      <<: [*common-env, *db-env]
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
+      ADMIN_GUILD_ID: ${ADMIN_GUILD_ID}
+    depends_on:
+      - api

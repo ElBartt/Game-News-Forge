@@ -68,24 +68,31 @@ This monorepo contains the code for three main components:
     DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN
     DISCORD_CLIENT_ID=YOUR_DISCORD_CLIENT_ID
     DISCORD_CLIENT_SECRET=YOUR_DISCORD_CLIENT_SECRET
-    DISCORD_CALLBACK_URL=http://localhost:3000/auth/callback
+    DISCORD_CALLBACK_URL=http://localhost:4000/auth/callback
     ADMIN_GUILD_ID=GUILD_ID_FOR_ADMIN_COMMANDS
     
-    # Web Configuration
+    # Session / Auth Configuration
     SESSION_SECRET=YOUR_SESSION_SECRET
-    WEB_PORT=3000
-    WEB_URL=http://localhost
+    COOKIE_DOMAIN=localhost
+    SESSION_MAX_AGE=604800000
 
     # Database Configuration
     DB_HOST=localhost
+    DB_PORT=3306
     DB_USER=dbuser
     DB_PASSWORD=dbpassword
     DB_NAME=gamewatcher
-    DB_PORT=3306
+    
+    # Dashboard Configuration
+    WEB_PORT=4000
+    WEB_URL=http://localhost:4000
+    DASHBOARD_BASE_PATH=
 
     # API Configuration
     API_PORT=8473
     API_ENDPOINT=http://localhost
+    CORS_ORIGINS=http://localhost:4000
+    SESSION_CLEANUP_INTERVAL=3600000
     ```
 
 4. **Configure Your Discord Bot**
@@ -144,20 +151,123 @@ For Coolify stack deployments:
 2. Expose only the `dashboard` service through your domain.
 3. Configure the domain/path as `https://bot.oslo.ovh/dashboard`.
 4. Keep the `bot` and `api` services internal (no public ports).
+5. Configure deployment secrets and environment variables through the Coolify UI.
 
-Required dashboard environment values:
+The Coolify compose file keeps stable internal values inline and reads secrets or deployment-specific values from Coolify environment variables. Internal service communication uses Docker service names:
 
-```sh
-NODE_ENV=prod
-WEB_PORT=4000
-DASHBOARD_BASE_PATH=/dashboard
-API_BASE_URL=http://api:8473
-DISCORD_CALLBACK_URL=https://bot.oslo.ovh/dashboard/auth/callback
-WEB_URL=https://bot.oslo.ovh/dashboard
-COOKIE_DOMAIN=bot.oslo.ovh
+- dashboard -> api: `http://api:8473`
+- api -> MariaDB: `mariadb`
+- bot -> MariaDB: `mariadb`
+
+Recommended `docker-compose.coolify.yml`:
+
+```yml
+x-common-env: &common-env
+  NODE_ENV: prod
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+x-db-env: &db-env
+  DB_HOST: mariadb
+  DB_PORT: 3306
+  DB_USER: ${DB_USER}
+  DB_PASSWORD: ${DB_PASSWORD}
+  DB_NAME: ${DB_NAME}
+
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      WEB_PORT: 4000
+      DASHBOARD_BASE_PATH: /dashboard
+      API_BASE_URL: http://api:8473
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
+      DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
+      DISCORD_CALLBACK_URL: ${DISCORD_CALLBACK_URL}
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      SESSION_SECRET: ${SESSION_SECRET}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      SESSION_MAX_AGE: ${SESSION_MAX_AGE:-604800000}
+    depends_on:
+      - api
+    expose:
+      - '4000'
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    environment:
+      <<: [*common-env, *db-env]
+      API_PORT: 8473
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      SESSION_CLEANUP_INTERVAL: ${SESSION_CLEANUP_INTERVAL:-3600000}
+    expose:
+      - '8473'
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    restart: unless-stopped
+    environment:
+      <<: [*common-env, *db-env]
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
+      ADMIN_GUILD_ID: ${ADMIN_GUILD_ID}
+    depends_on:
+      - api
 ```
 
 The dashboard now supports path-based hosting and prefixes routes/static assets with `DASHBOARD_BASE_PATH`, while server-to-server API calls can use Docker-internal hostnames through `API_BASE_URL`.
+
+Recommended `.env.prod` structure for Coolify-managed variables:
+
+```sh
+# Logging
+LOG_LEVEL=INFO
+
+# Discord
+DISCORD_TOKEN=
+DISCORD_CLIENT_ID=
+DISCORD_CLIENT_SECRET=
+DISCORD_CALLBACK_URL=https://your-domain.example/dashboard/auth/callback
+ADMIN_GUILD_ID=
+
+# Session / auth
+SESSION_SECRET=
+COOKIE_DOMAIN=your-domain.example
+SESSION_MAX_AGE=604800000
+
+# Database
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+
+# API
+CORS_ORIGINS=https://your-domain.example
+SESSION_CLEANUP_INTERVAL=3600000
+```
+
+Secrets that should exist only in the Coolify UI:
+
+- `DISCORD_TOKEN`
+- `DISCORD_CLIENT_SECRET`
+- `SESSION_SECRET`
+- `DB_PASSWORD`
+
+Variables no longer needed in the production env with this Coolify setup:
+
+- `WEB_PORT`
+- `API_PORT`
+- `API_ENDPOINT`
+- `DB_HOST`
+- `DB_PORT`
+- `WEB_URL`
 
 ### Deploy Commands
 
