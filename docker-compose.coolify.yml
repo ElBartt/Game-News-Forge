@@ -23,7 +23,6 @@ services:
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
       DISCORD_CALLBACK_URL: ${DISCORD_CALLBACK_URL}
-      # TODO: Required for dashboard guild detail lookups; remove when that dependency on the bot token is eliminated.
       DISCORD_TOKEN: ${DISCORD_TOKEN}
       SESSION_SECRET: ${SESSION_SECRET}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN}

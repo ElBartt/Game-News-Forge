@@ -60,7 +60,7 @@ This monorepo contains the code for three main components:
     
 3. **Configure Environment Variables**
     - Create `.env.dev` and `.env.prod` files based on the following template.
-    - The dashboard examples use port `4000` to match the current `WEB_PORT` default used by the dashboard service in this repository:
+    - The dashboard examples use port `4000` to match the current `WEB_PORT` default used by the dashboard service in this repository.
     ```
     # Logging
     LOG_LEVEL=INFO  # DEBUG, INFO, WARN, ERROR
@@ -262,8 +262,6 @@ Secrets that should exist only in the Coolify UI:
 - `DISCORD_CLIENT_SECRET`
 - `SESSION_SECRET`
 - `DB_PASSWORD`
-
-Note: the current dashboard implementation also needs `DISCORD_TOKEN` for guild detail lookups, so it must be provided to both `dashboard` and `bot` until that runtime dependency is removed from the application code.
 
 `WEB_URL` was part of the older environment template, but the current production dashboard runtime no longer reads `process.env.WEB_URL`. The deployed dashboard URL is now represented by `DISCORD_CALLBACK_URL`, `COOKIE_DOMAIN`, and the public Coolify domain/path configuration instead.
 
