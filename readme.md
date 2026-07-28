@@ -60,7 +60,7 @@ This monorepo contains the code for three main components:
     
 3. **Configure Environment Variables**
     - Create `.env.dev` and `.env.prod` files based on the following template.
-    - The dashboard examples use port `4000` to match the current default `WEB_PORT`:
+    - The dashboard examples use port `4000` to match the current `WEB_PORT` default used by the dashboard service in this repository:
     ```
     # Logging
     LOG_LEVEL=INFO  # DEBUG, INFO, WARN, ERROR
@@ -188,7 +188,6 @@ services:
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
       DISCORD_CALLBACK_URL: ${DISCORD_CALLBACK_URL}
-      # TODO: Required by dashboard/app/core/application/services/GuildService.js; remove when guild lookups stop using the bot token.
       DISCORD_TOKEN: ${DISCORD_TOKEN}
       SESSION_SECRET: ${SESSION_SECRET}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN}
@@ -266,14 +265,14 @@ Note: the current dashboard implementation also needs `DISCORD_TOKEN` for guild 
 
 Variables no longer needed in the production env with this Coolify setup:
 
+`WEB_URL` was part of the older environment template, but the current production dashboard runtime no longer reads `process.env.WEB_URL`. The deployed dashboard URL is now represented by `DISCORD_CALLBACK_URL`, `COOKIE_DOMAIN`, and the public Coolify domain/path configuration instead.
+
 - `WEB_PORT`
 - `API_PORT`
 - `API_ENDPOINT`
 - `DB_HOST`
 - `DB_PORT`
 - `WEB_URL`
-
-`WEB_URL` was part of the older environment template, but the current production dashboard runtime no longer reads `process.env.WEB_URL`. The deployed dashboard URL is now represented by `DISCORD_CALLBACK_URL`, `COOKIE_DOMAIN`, and the public Coolify domain/path configuration instead.
 
 ### Deploy Commands
 
