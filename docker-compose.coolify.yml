@@ -23,7 +23,7 @@ services:
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
       DISCORD_CALLBACK_URL: ${DISCORD_CALLBACK_URL}
-      # Required by the current dashboard guild lookup flow.
+      # TODO: Required by the current dashboard guild lookup flow; remove when that dependency is refactored away.
       DISCORD_TOKEN: ${DISCORD_TOKEN}
       SESSION_SECRET: ${SESSION_SECRET}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN}
