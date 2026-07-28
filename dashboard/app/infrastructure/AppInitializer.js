@@ -59,11 +59,7 @@ class AppInitializer {
         // Configure view engine and static files
         this.app.set('view engine', 'ejs');
         this.app.set('views', path.join(__dirname, '../views'));
-        if (dashboardBasePath) {
-            this.app.use(dashboardBasePath, express.static(path.join(__dirname, '../public')));
-        } else {
-            this.app.use(express.static(path.join(__dirname, '../public')));
-        }
+        this.app.use(dashboardBasePath, express.static(path.join(__dirname, '../public')));
         
         // Add environment variables to all views
         this.app.use((req, res, next) => {
@@ -122,11 +118,7 @@ class AppInitializer {
         );
         
         // Use the configured router for all routes
-        if (dashboardBasePath) {
-            this.app.use(dashboardBasePath, router.getRouter());
-        } else {
-            this.app.use(router.getRouter());
-        }
+        this.app.use(dashboardBasePath, router.getRouter());
     }
 
     /**

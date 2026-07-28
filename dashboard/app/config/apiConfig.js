@@ -16,7 +16,7 @@ function getApiBaseUrl() {
         return endpointWithoutTrailingSlash;
     }
 
-    if (endpointWithoutTrailingSlash.includes('https://') && !endpointWithoutTrailingSlash.includes('localhost')) {
+    if (endpointWithoutTrailingSlash.startsWith('https://') && !endpointWithoutTrailingSlash.includes('localhost')) {
         return endpointWithoutTrailingSlash;
     }
 

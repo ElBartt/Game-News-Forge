@@ -7,7 +7,9 @@ const logger = require('@shared/logger');
 
 // Ensure the shared config is loaded first (which loads environment variables)
 const defaultCorsOrigins = sharedConfig.isProd()
-    ? ['https://oslo.ovh', 'https://bot.oslo.ovh']
+    ? (process.env.PRODUCTION_CORS_ORIGINS
+        ? process.env.PRODUCTION_CORS_ORIGINS.split(',')
+        : ['https://oslo.ovh', 'https://bot.oslo.ovh'])
     : ['http://localhost:4000', 'http://localhost:81', 'http://localhost:8080'];
 
 const config = {
