@@ -59,7 +59,11 @@ class AppInitializer {
         // Configure view engine and static files
         this.app.set('view engine', 'ejs');
         this.app.set('views', path.join(__dirname, '../views'));
-        this.app.use(dashboardBasePath || '/', express.static(path.join(__dirname, '../public')));
+        if (dashboardBasePath) {
+            this.app.use(dashboardBasePath, express.static(path.join(__dirname, '../public')));
+        } else {
+            this.app.use(express.static(path.join(__dirname, '../public')));
+        }
         
         // Add environment variables to all views
         this.app.use((req, res, next) => {
@@ -87,7 +91,7 @@ class AppInitializer {
         
         // Serve logo as favicon
         this.app.use(`${dashboardBasePath}/favicon.ico`, (req, res) => {
-            res.sendFile(path.join(__dirname, '../img/game-news-forge-logo-favicon.png'));
+            res.redirect(302, `${dashboardBasePath}/img/game-news-forge-logo-favicon.png`);
         });
     }
 
@@ -118,7 +122,11 @@ class AppInitializer {
         );
         
         // Use the configured router for all routes
-        this.app.use(dashboardBasePath || '/', router.getRouter());
+        if (dashboardBasePath) {
+            this.app.use(dashboardBasePath, router.getRouter());
+        } else {
+            this.app.use(router.getRouter());
+        }
     }
 
     /**

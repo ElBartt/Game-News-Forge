@@ -133,10 +133,10 @@ npm run start:dashboard:prod
 
 This repository now includes production Docker files for the bot, dashboard, and API:
 
-- `/home/runner/work/Game-News-Forge/Game-News-Forge/Dockerfile.bot`
-- `/home/runner/work/Game-News-Forge/Game-News-Forge/Dockerfile.dashboard`
-- `/home/runner/work/Game-News-Forge/Game-News-Forge/Dockerfile.api`
-- `/home/runner/work/Game-News-Forge/Game-News-Forge/docker-compose.coolify.yml`
+- `./Dockerfile.bot`
+- `./Dockerfile.dashboard`
+- `./Dockerfile.api`
+- `./docker-compose.coolify.yml`
 
 For Coolify stack deployments:
 

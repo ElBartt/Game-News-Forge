@@ -24,7 +24,8 @@ function getDashboardBasePath() {
  */
 function withDashboardBasePath(path) {
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    return `${getDashboardBasePath()}${normalizedPath}` || '/';
+    const prefixedPath = `${getDashboardBasePath()}${normalizedPath}`;
+    return prefixedPath || '/';
 }
 
 module.exports = {

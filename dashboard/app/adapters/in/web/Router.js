@@ -25,6 +25,34 @@ class Router {
         
         this.setupRoutes();
     }
+
+    /**
+     * Create a simple in-memory rate limiter middleware
+     * @param {number} windowMs
+     * @param {number} maxRequests
+     * @returns {Function}
+     */
+    createRateLimiter(windowMs, maxRequests) {
+        const buckets = new Map();
+
+        return (req, res, next) => {
+            const key = req.ip || req.socket.remoteAddress || 'unknown';
+            const now = Date.now();
+            const currentBucket = buckets.get(key);
+
+            if (!currentBucket || now >= currentBucket.resetAt) {
+                buckets.set(key, { count: 1, resetAt: now + windowMs });
+                return next();
+            }
+
+            if (currentBucket.count >= maxRequests) {
+                return res.status(429).send('Too many requests, please try again later.');
+            }
+
+            currentBucket.count += 1;
+            return next();
+        };
+    }
     
     /**
      * Middleware to check if user is authenticated
@@ -40,20 +68,23 @@ class Router {
      * Setup all application routes
      */
     setupRoutes() {
+        const authRateLimiter = this.createRateLimiter(15 * 60 * 1000, 60);
+
         // Auth routes
         this.router.get('/', 
             this.isAuthenticated,
             (req, res, next) => this.guildController.renderDashboard(req, res, next)
         );
         this.router.get('/dashboard', (req, res) => res.redirect(withDashboardBasePath('/')));
-        this.router.get('/login', (req, res, next) => this.authController.renderLogin(req, res, next));
+        this.router.get('/login', authRateLimiter, (req, res, next) => this.authController.renderLogin(req, res, next));
         this.router.get('/logout', (req, res, next) => this.authController.handleLogout(req, res, next));
         
-        this.router.get('/auth/discord', passport.authenticate('discord', { 
+        this.router.get('/auth/discord', authRateLimiter, passport.authenticate('discord', { 
             scope: ['identify', 'guilds'] 
         }));
         
         this.router.get('/auth/callback', 
+            authRateLimiter,
             passport.authenticate('discord', { 
                 failureRedirect: withDashboardBasePath('/login')
             }),
