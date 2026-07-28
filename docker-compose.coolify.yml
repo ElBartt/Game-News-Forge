@@ -1,0 +1,39 @@
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    restart: unless-stopped
+    environment:
+      NODE_ENV: prod
+      WEB_PORT: 4000
+      DASHBOARD_BASE_PATH: /dashboard
+      API_BASE_URL: http://api:8473
+      DISCORD_CALLBACK_URL: https://bot.oslo.ovh/dashboard/auth/callback
+      WEB_URL: https://bot.oslo.ovh/dashboard
+      COOKIE_DOMAIN: bot.oslo.ovh
+    depends_on:
+      - api
+    expose:
+      - '4000'
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    restart: unless-stopped
+    environment:
+      NODE_ENV: prod
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: prod
+      API_PORT: 8473
+    expose:
+      - '8473'

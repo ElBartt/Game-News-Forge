@@ -3,6 +3,7 @@ const GameMapper = require('./GameMapper');
 const axios = require('axios');
 const logger = require('@shared/logger');
 const { NotFoundError, ApplicationError } = require('../../../core/application/errors/ApplicationErrors');
+const { getApiBaseUrl } = require('../../../config/apiConfig');
 
 /**
  * Implementation of GameRepository that connects to the API
@@ -10,16 +11,7 @@ const { NotFoundError, ApplicationError } = require('../../../core/application/e
 class GameRepositoryImpl extends GameRepository {
     constructor() {
         super();
-        // Get API URL from config
-        const api_port = process.env.API_PORT || 8080;
-        const api_endpoint = process.env.API_ENDPOINT || 'http://localhost';
-        
-        // For production with custom domain, don't add port to the URL
-        if (api_endpoint.includes('https://') && !api_endpoint.includes('localhost')) {
-            this.apiUrl = `${api_endpoint}/api`;
-        } else {
-            this.apiUrl = `${api_endpoint}:${api_port}/api`;
-        }
+        this.apiUrl = `${getApiBaseUrl()}/api`;
         
         logger.debug(`GameRepository initialized with API URL: ${this.apiUrl}`);
     }

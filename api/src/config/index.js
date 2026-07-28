@@ -6,6 +6,12 @@ const sharedConfig = require('@shared/config');
 const logger = require('@shared/logger');
 
 // Ensure the shared config is loaded first (which loads environment variables)
+const defaultCorsOrigins = sharedConfig.isProd()
+    ? (process.env.PRODUCTION_CORS_ORIGINS
+        ? process.env.PRODUCTION_CORS_ORIGINS.split(',')
+        : ['https://oslo.ovh', 'https://bot.oslo.ovh'])
+    : ['http://localhost:4000', 'http://localhost:81', 'http://localhost:8080'];
+
 const config = {
     // Server configuration
     port: process.env.API_PORT || 8473,
@@ -14,7 +20,7 @@ const config = {
     // CORS settings - Make sure to include all relevant origins with appropriate fallbacks
     corsOrigins: process.env.CORS_ORIGINS ? 
         process.env.CORS_ORIGINS.split(',') : 
-        ['https://oslo.ovh', 'http://localhost:4000', 'http://localhost:81', 'http://localhost:8080', '*'],
+        defaultCorsOrigins,
     
     // Include shared helper methods
     isProd: sharedConfig.isProd,

@@ -1,5 +1,6 @@
 const DashboardViewModel = require('./viewmodels/DashboardViewModel');
 const { NotFoundError } = require('../../../core/application/errors/ApplicationErrors');
+const { withDashboardBasePath } = require('../../../config/urlConfig');
 
 /**
  * Controller for guild-related web routes
@@ -64,7 +65,7 @@ class GuildController {
     async renderDashboard(req, res, next) {
         try {
             if (!req.user) {
-                return res.redirect('/login');
+                return res.redirect(withDashboardBasePath('/login'));
             }
 
             const userWithGuilds = await this.userService.getUserProfile(req.user);

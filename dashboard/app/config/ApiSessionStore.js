@@ -3,22 +3,9 @@
  */
 const session = require('express-session');
 const logger = require('@shared/logger');
-const config = require('@shared/config');
+const { getApiBaseUrl } = require('./apiConfig');
 // Use axios instead of node-fetch
 const axios = require('axios');
-
-// Use a consistent API URL based on environment
-const getApiBaseUrl = () => {
-    const api_port = process.env.API_PORT || 8080;
-    const api_endpoint = process.env.API_ENDPOINT || 'http://localhost';
-    
-    // For production with custom domain, don't add port to the URL
-    if (api_endpoint.includes('https://') && !api_endpoint.includes('localhost')) {
-        return api_endpoint;
-    }
-    
-    return `${api_endpoint}:${api_port}`;
-};
 
 class ApiSessionStore extends session.Store {
     constructor(options = {}) {

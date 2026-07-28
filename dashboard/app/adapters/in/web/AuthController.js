@@ -1,3 +1,5 @@
+const { withDashboardBasePath } = require('../../../config/urlConfig');
+
 /**
  * Controller for authentication-related web routes
  */
@@ -12,7 +14,7 @@ class AuthController {
         try {
             // If user is already logged in, redirect to dashboard
             if (req.isAuthenticated()) {
-                return res.redirect('/dashboard');
+                return res.redirect(withDashboardBasePath('/'));
             }
             res.render('login');
         } catch (error) {
@@ -32,7 +34,7 @@ class AuthController {
                 if (err) {
                     return next(err);
                 }
-                res.redirect('/');
+                res.redirect(withDashboardBasePath('/'));
             });
         } catch (error) {
             next(error);
@@ -47,7 +49,7 @@ class AuthController {
      */
     handleAuthCallback(req, res, next) {
         try {
-            res.redirect('/dashboard');
+            res.redirect(withDashboardBasePath('/'));
         } catch (error) {
             next(error);
         }

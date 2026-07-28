@@ -129,6 +129,36 @@ Start the dashboard in production mode:
 npm run start:dashboard:prod
 ```
 
+### Docker deployment (Coolify/VPS)
+
+This repository now includes production Docker files for the bot, dashboard, and API:
+
+- `./Dockerfile.bot`
+- `./Dockerfile.dashboard`
+- `./Dockerfile.api`
+- `./docker-compose.coolify.yml`
+
+For Coolify stack deployments:
+
+1. Use `docker-compose.coolify.yml`.
+2. Expose only the `dashboard` service through your domain.
+3. Configure the domain/path as `https://bot.oslo.ovh/dashboard`.
+4. Keep the `bot` and `api` services internal (no public ports).
+
+Required dashboard environment values:
+
+```sh
+NODE_ENV=prod
+WEB_PORT=4000
+DASHBOARD_BASE_PATH=/dashboard
+API_BASE_URL=http://api:8473
+DISCORD_CALLBACK_URL=https://bot.oslo.ovh/dashboard/auth/callback
+WEB_URL=https://bot.oslo.ovh/dashboard
+COOKIE_DOMAIN=bot.oslo.ovh
+```
+
+The dashboard now supports path-based hosting and prefixes routes/static assets with `DASHBOARD_BASE_PATH`, while server-to-server API calls can use Docker-internal hostnames through `API_BASE_URL`.
+
 ### Deploy Commands
 
 Deploy slash commands for development:

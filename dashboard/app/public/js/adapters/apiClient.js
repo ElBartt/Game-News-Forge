@@ -7,8 +7,7 @@ class ApiClient {
      * Initialize the API client
      */
     constructor() {
-        // Base URL for API requests, empty string means same origin
-        this.baseUrl = '';
+        this.baseUrl = window.__DASHBOARD_BASE_PATH__ || '';
         this.gatewayPrefix = '/gnf'; // Use the gateway prefix for dashboard backend routes
     }
 
