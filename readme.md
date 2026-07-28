@@ -59,7 +59,8 @@ This monorepo contains the code for three main components:
     ```
     
 3. **Configure Environment Variables**
-    - Create `.env.dev` and `.env.prod` files based on the following template:
+    - Create `.env.dev` and `.env.prod` files based on the following template.
+    - The dashboard examples use port `4000` to match the current default `WEB_PORT`:
     ```
     # Logging
     LOG_LEVEL=INFO  # DEBUG, INFO, WARN, ERROR
@@ -235,12 +236,12 @@ LOG_LEVEL=INFO
 DISCORD_TOKEN=
 DISCORD_CLIENT_ID=
 DISCORD_CLIENT_SECRET=
-DISCORD_CALLBACK_URL=https://your-domain.example/dashboard/auth/callback
+DISCORD_CALLBACK_URL=https://bot.yourdomain.com/dashboard/auth/callback
 ADMIN_GUILD_ID=
 
 # Session / auth
 SESSION_SECRET=
-COOKIE_DOMAIN=your-domain.example
+COOKIE_DOMAIN=bot.yourdomain.com
 SESSION_MAX_AGE=604800000
 
 # Database
@@ -249,7 +250,7 @@ DB_PASSWORD=
 DB_NAME=
 
 # API
-CORS_ORIGINS=https://your-domain.example
+CORS_ORIGINS=https://bot.yourdomain.com
 SESSION_CLEANUP_INTERVAL=3600000
 ```
 
