@@ -3,7 +3,7 @@ x-common-env: &common-env
   LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
 x-db-env: &db-env
-  DB_HOST: mariadb
+  DB_HOST: ${DB_HOST}
   DB_PORT: 3306
   DB_USER: ${DB_USER}
   DB_PASSWORD: ${DB_PASSWORD}
