@@ -21,7 +21,7 @@ module.exports = {
         const watcherManager = WatcherManager.getInstance()
         await watcherManager.addWatcher(new SteamExternalWatcher());
         await watcherManager.addWatcher(new SteamInternalWatcher());
-        await watcherManager.addWatcher(new TwitterWatcher());
+        // await watcherManager.addWatcher(new TwitterWatcher());
         await watcherManager.startAll();
 
         logger.info('Starting release announcer...');
