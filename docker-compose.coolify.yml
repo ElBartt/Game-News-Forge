@@ -18,7 +18,7 @@ services:
     environment:
       <<: *common-env
       WEB_PORT: 4000
-      DASHBOARD_BASE_PATH: /dashboard
+      DASHBOARD_BASE_PATH: ${DASHBOARD_BASE_PATH}
       API_BASE_URL: http://api:8473
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
