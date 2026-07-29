@@ -31,6 +31,8 @@ services:
       - api
     expose:
       - '4000'
+    networks:
+      - coolify
 
   api:
     build:
@@ -44,6 +46,8 @@ services:
       SESSION_CLEANUP_INTERVAL: ${SESSION_CLEANUP_INTERVAL:-3600000}
     expose:
       - '8473'
+    networks:
+      - coolify
 
   bot:
     build:
@@ -57,3 +61,9 @@ services:
       ADMIN_GUILD_ID: ${ADMIN_GUILD_ID}
     depends_on:
       - api
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true
