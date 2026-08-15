@@ -9,6 +9,21 @@ const validationHandler = require('../middleware/validationHandler');
 
 /**
  * @swagger
+ * /api/sessions/clear-expired:
+ *   post:
+ *     summary: Clear expired sessions
+ *     description: Removes all expired sessions from storage
+ *     responses:
+ *       200:
+ *         description: Expired sessions cleared successfully
+ */
+router.post(
+    '/sessions/clear-expired',
+    sessionController.clearExpiredSessions
+);
+
+/**
+ * @swagger
  * /api/sessions/{sessionId}:
  *   get:
  *     summary: Get a session by ID
@@ -104,21 +119,6 @@ router.delete(
     ],
     validationHandler,
     sessionController.destroySession
-);
-
-/**
- * @swagger
- * /api/sessions/clear-expired:
- *   post:
- *     summary: Clear expired sessions
- *     description: Removes all expired sessions from storage
- *     responses:
- *       200:
- *         description: Expired sessions cleared successfully
- */
-router.post(
-    '/sessions/clear-expired',
-    sessionController.clearExpiredSessions
 );
 
 module.exports = router;

@@ -18,7 +18,8 @@ class GuildMapper {
             guildData.icon,
             guildData.permissions || 0,
             guildData.webhook_url || null,
-            guildData.channel_id || null
+            guildData.channel_id || null,
+            guildData.owner || false
         );
     }
     

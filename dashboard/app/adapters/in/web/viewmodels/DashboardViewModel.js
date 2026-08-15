@@ -86,8 +86,17 @@ class DashboardViewModel {
      * @returns {boolean} Whether user has admin permissions
      */
     hasAdminPermission(guild) {
-        if (!guild || !guild.permissions) return false;
-        return (guild.permissions & 0x8) === 0x8; // Check for ADMINISTRATOR permission
+        if (!guild) return false;
+        if (guild.owner) return true;
+        if (guild.permissions === undefined || guild.permissions === null) return false;
+        try {
+            const perms = BigInt(guild.permissions);
+            const ADMINISTRATOR = 0x8n;
+            const MANAGE_GUILD = 0x20n;
+            return (perms & ADMINISTRATOR) === ADMINISTRATOR || (perms & MANAGE_GUILD) === MANAGE_GUILD;
+        } catch {
+            return false;
+        }
     }
 
     /**
